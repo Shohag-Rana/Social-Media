@@ -1,0 +1,70 @@
+.post_collapse:active .body_text{
+	display: none;
+}
+.dot{
+            width: 25px;
+            height: 25px;
+            line-height: 25px;
+            border-radius: 50%;
+            font-size: 18px;
+            color: white;
+            text-align: center;
+            background: black;
+        }
+ 
+
+.dot2{
+               width: 25px;
+            height: 25px;
+            line-height: 25px;
+            border-radius: 50%;
+            font-size: 18px;
+            color: white;
+            text-align: center;
+            background: black;
+        }
+
+.md2{
+	margin-left: 40px;
+}
+.user_name{
+	color: black;
+	margin-left: 60px;
+	position: relative;
+	top: -45px;
+}
+.time{
+	/*float: right;*/
+	position: relative;
+	top: 0;
+	font-style: italic;
+	font-size: 14px;
+	color: black;
+	left: 100px;
+}
+.comnt_body{
+	margin: 0;
+    padding: 0;
+    position: relative;
+    top: -50px;
+    left: 58px;
+}
+.rep_body{
+    position: relative;
+    height: auto;
+    top: -7px;
+    padding-bottom: 5px;
+}
+.media-body{
+	margin: 0 !important;
+}
+.rep_button{
+	margin: -37px 10px 9px 0px;
+    float: right;
+}
+.delete_button{
+	float: right;
+}
+.btn2{
+	margin-left: 80px;
+}

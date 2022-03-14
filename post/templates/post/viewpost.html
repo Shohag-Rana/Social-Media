@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block link %}
+{{block.super}}
+      <link rel="stylesheet" type="text/css" href="{% static 'post/css/viewpost.css' %}">
+{% endblock link %}
+
+{% block content1 %}
+ <div class="container">
+      {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{message.tags}} alert-dismissible"><strong>{{message.tags}}</strong> {{message}}
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+               
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="row">  
+     {% for post in posts %}
+     <div class="col-lg-6 col-md-12">
+      <div class="card" style="width: 32rem;">
+        <img class="card-img-top" src="{{post.feature_photo.url}}" alt="Card image cap" height="350">
+        <div class="card-body">
+          <h4 class="card-title">{{post.post_title}}</h4>
+          <p class="card-text">
+            <a href="#{{post.id}}" class="btn post_collapse" data-toggle="collapse">See More</a>
+            <div id="{{post.id}}" class="collapse">
+              {{post.post_body}}
+            </div>
+          </p>
+          <p class="card-text">{{post.post_date|naturaltime}}</p>
+          <p class="card-text">{{post.country}}</p>
+          <p class="card-text">{{post.city}}</p>
+          <p class="card-text">{{post.id}}</p>
+          {% if comments %}
+            <p class="card-text">
+              <a href="#cc{{post.id}}" class="btn btn-outline-danger mr-5 post_collapse" data-toggle="collapse">See Comments</a>
+              <a href="" type="button" class="btn btn-outline-info btn2  text-dark text-center ml-5" data-toggle="modal" data-target="#h{{post.id}}">Add a Comment</a>
+            <div id="cc{{post.id}}" class="collapse">
+             {% for cmnt in comments %}
+                {% if cmnt.post.id == post.id %}
+                  <div class="media">
+                    <p class="dot">{{ cmnt.user.username.0|title }}</p>
+                    <p class="user_name">{{cmnt.user.username}} <span class="time">{{cmnt.cmnt_time|naturaltime}}</span>
+
+                      {% if request.user.is_authenticated %}
+                        <span class="delete_button"><a href="/post/del_comment/{{post.id}}/{{cmnt.id}}/"><i class="fas fa-trash-alt"></i></a></span> 
+                      {% endif %}
+                    </p>
+                    <div class="media-body">
+                      <p class="comnt_body">{{cmnt.comment_body}}</p>
+                      <div class="rep">
+                        {% for rep in replays %} 
+                          {% if cmnt.id == rep.comment.id %}
+
+                             <div class="media mt-3 md2 rep_body">
+                              <p class="dot2">{{ rep.user.username.0 }}</p>
+                              <p class="user_name">{{cmnt.user.username}} <span class="time">{{rep.replay_time|naturaltime}}</span>
+                                {% if request.user.is_authenticated %}
+                                 <span class="delete_button"><a href="/post/del_rep/{{rep.id}}/"><i class="fas fa-trash-alt"></i></a></span> 
+                                {% endif %}
+                              </p>
+                              <div class="media-body">
+                                <p class="comnt_body" > 
+                              </div>
+                            </div>
+                          {% endif %}
+                        {% endfor %}
+
+                      </div>
+                    </div>
+                  </div>
+ 
+                    <div class="text-center rep_button">
+                      <a href="" type="button" class="btn btn-info btn-sm p-2 text-white text-center float-right mb-5" data-toggle="modal" data-target="#c{{cmnt.id}}">Replay</a>
+                    </div>
+                    <hr>
+                    <div class="modal fade" id="c{{cmnt.id}}" tabindex="-1" role="dialog"
+                      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLongTitle">Add a Replay</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                  </button>
+                              </div>
+                              <div class="modal-body">
+                                  <form action="/post/replay/{{post.id}}/{{request.user.id}}/{{cmnt.id}}/" method="POST" form-type="comment_post">
+                                      {% csrf_token %}
+                                      <div class="form-group">
+                                          <label for="exampleFormControlTextarea2"><small> Content Area</small></label>
+                                          <textarea class="form-control" id="exampleFormControlTextarea2" rows="3" name="replay"></textarea>
+                                      </div>
+                                      <br>
+                                      <div class="float-right">
+                                          <input type="submit" value="Replay" class="btn btn-outline-primary">
+                                      </div>
+                                  </form>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+                 </p>
+              {% endif %}
+               
+            {% endfor %}
+            </div>
+            </p>
+          {% endif %}
+       <!--  <div class="text-center">
+          <a href="" type="button" class="btn btn-info p-2 text-white text-center mb-5" data-toggle="modal" data-target="#h{{post.id}}">Add a Comment</a>
+        </div>
+ -->
+      <div class="modal fade" id="h{{post.id}}" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add a Comment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="/post/comment/{{post.id}}/{{request.user.id}}/" method="POST" form-type="comment_post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="exampleFormControlTextarea1"><small> Content Area</small></label>
+                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="comment"></textarea>
+                        </div>
+                        <br>
+                        <div class="float-right">
+                            <input type="submit" value="Comment" class="btn btn-outline-primary">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+  </div>
+</div>
+
+ 
+
+ 
+{% endblock content1 %}
+
+{% block script %}
+{{block.super}}
+ 
+{% endblock script %}
